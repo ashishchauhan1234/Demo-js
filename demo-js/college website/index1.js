@@ -12,7 +12,7 @@ class Book {
 // Display Constructor
 class Display {
     add() {
-        console.log("adding to book ui");
+        // console.log("adding to book ui");
         let tableBody = document.getElementById('tableBody');
         let books = localStorage.getItem("books");
         let booksObj = new Array();
@@ -22,29 +22,35 @@ class Display {
         else {
             booksObj = JSON.parse(books);
         }
-        console.log(books, typeof books);
+        // console.log(booksObj, typeof booksObj);
         let uiString = ``;
-        booksObj.forEach(function(index, book){
-            console.log(book, index);
+        Array.from(booksObj).forEach(function (book, index) {
+            // console.log(book, "+", book, "+", index);
             uiString += `
                 <tr>
-                    <th scope="row">${index.value}</th>
+                    <th scope="row">${index}</th>
                     <td>${book.name}</td>
                     <td>${book.author} </td>
                     <td>${book.type}</td>
+                    <td><button id = '${index}' onclick = "display.deleteBook(this.id)" class="btn btn-primary">Delete notes</button></td>
+
                 </tr>
             `;
         })
-
-        // let uiString = `
-        //     <tr>
-        //         <th scope="row">1</th>
-        //         <td>${book.name}</td>
-        //         <td>${book.author} </td>
-        //         <td>${book.type}</td>
-        //     </tr>
-        // `;
         tableBody.innerHTML = uiString;
+    }
+    deleteBook(index) {
+        let books = localStorage.getItem("books");
+        let booksObj = new Array();
+        if (books == null) {
+            booksObj = [];
+        }
+        else {
+            booksObj = JSON.parse(books);
+        }
+        booksObj.splice(index, 1);
+        localStorage.setItem('books', JSON.stringify(booksObj));
+        this.add()
     }
     clear() {
         let libraryForm = document.getElementById('libraryForm');
@@ -58,7 +64,7 @@ class Display {
             return false;
         }
     }
-    saveData(book){
+    saveData(book) {
         let books = localStorage.getItem("books");
         let booksObj = new Array();
         if (books == null) {
@@ -69,7 +75,7 @@ class Display {
         }
         booksObj.push(book);
         localStorage.setItem('books', JSON.stringify(booksObj));
-        console.log("book has been saved in the lo0cal storage");
+        // console.log("book has been saved in the lo0cal storage");
     }
     show(type, displayMessage) {
         let message = document.getElementById("message");
@@ -126,16 +132,27 @@ function libraryFormSubmit(e) {
     if (display.validate(book)) {
         display.clear();
         display.show('success', 'congrats, Your book has successfully added');
+        display.saveData(book);
+        display.add();
     }
     else {
         display.show("danger", 'sorry, You can not added this book');
     }
-    display.saveData(book);
-
-    
 
     e.preventDefault();
-
 }
 let display = new Display();
 display.add();
+
+let inputEle1 = document.querySelector('#bookName');
+let inputEle2 = document.querySelector('#author');
+inputEle1.addEventListener('input', changeBgColor)
+inputEle2.addEventListener('input', changeBgColor)
+
+function changeBgColor() {
+    x = Math.floor(Math.random() * 255);
+    y = Math.floor(Math.random() * 255);
+    document.body.style.backgroundColor = `rgb(${x},${y},${(x + y)} )`;
+}
+
+
